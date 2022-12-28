@@ -17,7 +17,6 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
   },
 });
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.icjdeya.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -41,13 +40,65 @@ async function run() {
         return res.json({ msg: "Email already used", status: false });
       }
       const hashedPassword = await brcypt.hash(password, 10);
-      const user = await ChatUser.insertOne({
+      const userInsert = await ChatUser.insertOne({
         email,
         username,
         password: hashedPassword,
+        avatarImage: "",
+        isAvatarImageSet: false,
       });
-      delete user.password;
+      delete password;
+      const user = {
+        email,
+        username,
+        password: hashedPassword,
+        isAvatarImageSet: false,
+        avatarImage: "",
+        _id: userInsert._id,
+      };
       return res.json({ status: true, user });
+    });
+    app.post("/login", async (req, res) => {
+      console.log(req.body);
+      const { username, password } = req.body;
+      const user = await ChatUser.findOne({ username });
+      if (!user) {
+        return res.json({ msg: "Username or Password Invalid", status: false });
+      }
+      const isPasswordValid = await brcypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        delete user.password;
+        return res.json({ msg: "Username or Password Invalid", status: false });
+      }
+      console.log(user);
+      return res.json({ status: true, user });
+    });
+    app.post("/setAvatar/:id", async (req, res) => {
+      const userId = req.params.id;
+      const avatarimage = req.body.image;
+      // console.log(userId, avatarimage);
+      const filter = { _id: ObjectId(userId) };
+      const updateDoc = {
+        $set: {
+          isAvatarImageSet: true,
+          avatarImage: avatarimage,
+        },
+      };
+      const options = { upsert: true };
+      const userData = await ChatUser.updateOne(filter, updateDoc, options);
+      console.log(userData);
+      if (userData.modifiedCount === 1) {
+        return res.json({
+          isSet: true,
+          image: avatarimage,
+        });
+      }
+      else{
+        return res.json({
+          isSet: false,
+          image: '',
+        });
+      }
     });
   } finally {
   }
