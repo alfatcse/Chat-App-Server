@@ -92,13 +92,31 @@ async function run() {
           isSet: true,
           image: avatarimage,
         });
-      }
-      else{
+      } else {
         return res.json({
           isSet: false,
-          image: '',
+          image: "",
         });
       }
+    });
+    app.get("/allusers/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const users=await ChatUser.find({_id:{$ne:ObjectId(id) }}).toArray();
+      const sendUser=[];
+      users.map(m=>{
+        
+        const a={
+          email:m.email,
+          _id:m._id,
+          username:m.username,
+          avatarimage:m?.avatarImage
+        }
+        sendUser.push(a);
+       
+      })
+      console.log(sendUser);
+      res.send(sendUser);
     });
   } finally {
   }
