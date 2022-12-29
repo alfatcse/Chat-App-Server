@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const socket = require("socket.io");
 require("dotenv").config();
 const brcypt = require("bcrypt");
 const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
@@ -11,12 +12,12 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { isObject } = require("util");
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.icjdeya.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -26,8 +27,32 @@ const client = new MongoClient(uri, {
 app.get("/", (req, res) => {
   res.send("hello");
 });
+const server = app.listen(port, () => {
+  console.log(`Serveddr is runningf ${port}`);
+});
+const io = socket(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+global.onlineUsers = new Map();
+io.on("connection", (socket) => {
+  global.chatSocket = socket;
+  socket.on("add-user", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+    }
+  });
+});
 async function run() {
   const ChatUser = client.db("Chat").collection("Chatuser");
+  const Meaasge = client.db("Chat").collection("Message");
   try {
     app.post("/register", async (req, res) => {
       const { email, username, password } = req.body;
@@ -99,29 +124,62 @@ async function run() {
         });
       }
     });
+    app.post("/addmsg", async (req, res) => {
+      console.log("add", req.body);
+      console.log(new Date());
+      const MsgData = {
+        message: { text: req.body.message },
+        users: [req.body.from, req.body.to],
+        sender: req.body.from,
+        createdAt: new Date(),
+      };
+      const data = await Meaasge.insertOne(MsgData);
+      if (data.acknowledged === true) {
+        res.send({ msg: "Message Added Successfully" });
+      } else {
+        res.send({ msg: "Failed to add message" });
+      }
+    });
+    app.post("/getallmessages", async (req, res) => {
+      const { from, to } = req.body;
+      const messages = await Meaasge.find({
+        users: {
+          $all: [from, to],
+        },
+      })
+        .sort({ createdAt: 1 })
+        .toArray();
+      console.log(messages);
+      const prjectMessage = [];
+      messages.map((msg) => {
+        const m = {
+          fromSelf: msg.sender === from,
+          message: msg.message.text,
+        };
+        prjectMessage.push(m);
+      });
+      console.log(prjectMessage);
+      res.send(prjectMessage);
+    });
     app.get("/allusers/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const users=await ChatUser.find({_id:{$ne:ObjectId(id) }}).toArray();
-      const sendUser=[];
-      users.map(m=>{
-        
-        const a={
-          email:m.email,
-          _id:m._id,
-          username:m.username,
-          avatarimage:m?.avatarImage
-        }
+      const users = await ChatUser.find({
+        _id: { $ne: ObjectId(id) },
+      }).toArray();
+      const sendUser = [];
+      users.map((m) => {
+        const a = {
+          email: m.email,
+          _id: m._id,
+          username: m.username,
+          avatarimage: m?.avatarImage,
+        };
         sendUser.push(a);
-       
-      })
-      console.log(sendUser);
+      });
       res.send(sendUser);
     });
   } finally {
   }
 }
 run().catch((e) => console.log(e));
-app.listen(port, () => {
-  console.log(`Serveddr is runningf ${port}`);
-});
