@@ -1,1 +1,1 @@
-# Chat-App-Server
+# Key feature of the project. 
