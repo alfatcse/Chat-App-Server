@@ -7,7 +7,7 @@ const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 app.use(cors());
 app.use(express.json());
-const port = 3000;
+const port = 4000;
 const http = require("http");
 const { Server } = require("socket.io");
 const { isObject } = require("util");
