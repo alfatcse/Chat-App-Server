@@ -7,11 +7,12 @@ const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 app.use(cors());
 app.use(express.json());
-const port = 5009;
+const port = 3000;
 const http = require("http");
 const { Server } = require("socket.io");
 const { isObject } = require("util");
 const httpServer = http.createServer(app);
+app.options('*', cors());
 // const io = new Server(httpServer, {
 //   cors: {
 //     origin: "*",
@@ -25,18 +26,19 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.send("Chat app is running at 5009 port");
 });
 const server = app.listen(port, () => {
-  console.log(`Serveddr is runningf ${port}`);
+  console.log(`Server is running ${port}`);
 });
 const io = socket(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
+    origin: '*',
+    methods: ["GET", "POST",""],
     credentials: true,
   },
 });
+
 global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
@@ -73,29 +75,32 @@ async function run() {
         isAvatarImageSet: false,
       });
       delete password;
+      //console.log(userInsert.insertedId.toString())
+      const userid=userInsert.insertedId.toString();
       const user = {
         email,
         username,
         password: hashedPassword,
         isAvatarImageSet: false,
         avatarImage: "",
-        _id: userInsert._id,
+        _id: userid,
       };
+    //  console.log(user);
       return res.json({ status: true, user });
     });
     app.post("/login", async (req, res) => {
-      console.log(req.body);
+     // console.log(req.body);
       const { username, password } = req.body;
       const user = await ChatUser.findOne({ username });
       if (!user) {
-        return res.json({ msg: "Username or Password Invalid", status: false });
+        return res.json({ msg: "Username  Invalid", status: false });
       }
       const isPasswordValid = await brcypt.compare(password, user.password);
       if (!isPasswordValid) {
         delete user.password;
-        return res.json({ msg: "Username or Password Invalid", status: false });
+        return res.json({ msg: "Password Invalid", status: false });
       }
-      console.log(user);
+     // console.log(user);
       return res.json({ status: true, user });
     });
     app.post("/setAvatar/:id", async (req, res) => {
@@ -111,7 +116,7 @@ async function run() {
       };
       const options = { upsert: true };
       const userData = await ChatUser.updateOne(filter, updateDoc, options);
-      console.log(userData);
+     // console.log(userData);
       if (userData.modifiedCount === 1) {
         return res.json({
           isSet: true,
@@ -125,8 +130,8 @@ async function run() {
       }
     });
     app.post("/addmsg", async (req, res) => {
-      console.log("add", req.body);
-      console.log(new Date());
+     // console.log("add", req.body);
+     // console.log(new Date());
       const MsgData = {
         message: { text: req.body.message },
         users: [req.body.from, req.body.to],
@@ -149,7 +154,7 @@ async function run() {
       })
         .sort({ createdAt: 1 })
         .toArray();
-      console.log(messages);
+    //  console.log(messages);
       const prjectMessage = [];
       messages.map((msg) => {
         const m = {
@@ -158,12 +163,12 @@ async function run() {
         };
         prjectMessage.push(m);
       });
-      console.log(prjectMessage);
+   //   console.log(prjectMessage);
       res.send(prjectMessage);
     });
     app.get("/allusers/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+    //  console.log(id);
       const users = await ChatUser.find({
         _id: { $ne: ObjectId(id) },
       }).toArray();
