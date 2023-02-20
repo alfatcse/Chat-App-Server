@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true,"Please Provide a name"],
     min: [3,"Name must be at least 3 Characters"],
-    max: [20,"Name is must be lower than 20 Characters"],
+    max: [20,"Name is must be lower than twenty Characters"],
     unique: [true,"Name must be Unique"],
     lowercase:true,
     trim:true
