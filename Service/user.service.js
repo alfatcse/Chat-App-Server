@@ -48,3 +48,15 @@ exports.userLogin = async (data) => {
     }
   }
 };
+exports.allUsers=async(data)=>{
+    console.log(data);
+    const users=await User.find({_id:{$ne:data}}).select([
+        "email",
+        "username",
+        "avatarImage",
+        "_id"
+    ])
+    if(users){
+        return users;
+    }
+}

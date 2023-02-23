@@ -4,7 +4,8 @@ const socket = require("socket.io");
 require("dotenv").config();
 const brcypt = require("bcrypt");
 const DBconnect=require("./Utils/DBConnect");
-const UserRoute=require('./Routes/register.route');
+const UserRoute=require('./Routes/user.route');
+const MessageRoute=require('./Routes/message.route');
 const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 app.use(cors());
@@ -44,6 +45,7 @@ io.on("connection", (socket) => {
   });
 });
 app.use('/api/v1/user',UserRoute);
+app.use('/api/v1/message',MessageRoute);
 // async function run() {
 //   const ChatUser = client.db("Chat").collection("Chatuser");
 //   const Meaasge = client.db("Chat").collection("Message");
