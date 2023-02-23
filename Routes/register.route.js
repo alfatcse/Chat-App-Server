@@ -3,4 +3,5 @@ const router=express.Router();
 const userController=require('../Controller/user.controller');
 router.route('/register').post(userController.createUser)
 router.route('/setAvatar/:id').post(userController.setAvatar)
+router.route('/login').post(userController.loginUser)
 module.exports=router

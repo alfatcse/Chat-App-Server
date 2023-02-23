@@ -1,20 +1,50 @@
 const User = require("../Model/userModel");
-const passwordDecript = require("bcrypt");
-exports.createUserService=async(data)=>{
-    const { email, username, password }=data;
-    const hashedPassword = await passwordDecript.hash(password, 10);
-    delete password;
-    const userInsert={
-        email,
-         username,
-         password: hashedPassword,
-         avatarImage: "", 
-         isAvatarImageSet: false,
+const passwordDecrypt = require("bcrypt");
+exports.createUserService = async (data) => {
+  const { email, username, password } = data;
+  const hashedPassword = await passwordDecrypt.hash(password, 10);
+  delete password;
+  const userInsert = {
+    email,
+    username,
+    password: hashedPassword,
+    avatarImage: "",
+    isAvatarImageSet: false,
+  };
+  const user = await User.create(userInsert);
+  console.log(user);
+  return user;
+};
+exports.setAvatarService = async (id, avatarimage) => {
+  console.log(id, avatarimage);
+  const avatarSet = await User.updateOne(
+    { _id: id },
+    { avatarImage: avatarimage, isAvatarImageSet: true },
+    {
+      returnOriginal: false,
     }
-    const user=await User.create(userInsert);
-    console.log(user);
-    return user;
-}
-exports.setAvatarService=async (data)=>{
-    console.log(data);
-}
+  );
+  console.log(avatarSet);
+  if (avatarSet.modifiedCount === 1) {
+    return avatarimage;
+  } 
+};
+exports.userLogin = async (data) => {
+  console.log(data);
+  const { username, password } = data;
+  const user = await User.findOne({ username });
+  if (!user) {
+    return false;
+  }
+  else{
+    const isPasswordValid = await passwordDecrypt.compare(password, user.password);
+    console.log(isPasswordValid);
+    if(!isPasswordValid){
+        delete user.password;
+        return false;
+    }
+    else{
+        return user; 
+    }
+  }
+};
