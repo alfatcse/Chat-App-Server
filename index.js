@@ -116,7 +116,7 @@ app.use('/api/v1/user',UserRoute);
 //         });
 //       } else {
 //         return res.json({
-//           isSet: false,
+//           isSet: false, 
 //           image: "",
 //         });
 //       }
