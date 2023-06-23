@@ -1,14 +1,12 @@
 ### Introduction
-This Project is the backend of Doctors's Portal where a user can register as a patients or doctor.Patient can book an appointment for a service by making a successful payment for the service. A doctor can publish individual slots for service. Doctors can view patients who has booked the appointment along with the payment status.There is an admin role who can delete any doctor or patient profile.Also can change the doctor's profile to verify the doctor credentials.   
+This Project is an innovative chat application that leverages modern technologies such as Socket.io, React, React Bootstrap, HTML, CSS, and more to deliver a dynamic and interactive messaging experience. With its robust features and seamless integration, ChatApp allows users to connect, communicate, and express themselves in real-time with other users from around the world.
+ 
 ### Project Features
-* User Account can created using Firebase Authentication.
-* Public (non-authenticated) users can access all services along with number of available spaces. 
-* Doctor profile can be created.
-* Booking appointments (with-authentication).
-* Update slots for publishing to the public access.
-* Make payment for confirming the booking.
-* Delete doctor and patient profile.
-* Update doctor's profile.
+* User can register into the application.
+* User can login into the application.
+* User can select an emoji as profile picture.
+* Real time conversation can be carried out among the users.
+* In between the conversation emoji can be used.  
 ### Usage
 * Run npm start:dev to start the application.
 * Connect to the API using Postman on port 5009.
@@ -39,7 +37,7 @@ This Project is the backend of Doctors's Portal where a user can register as a p
 * [NodeJS](https://nodejs.org/) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 * [ExpressJS](https://www.expresjs.org/) This is a NodeJS web application framework.
 * [MongoDB](https://www.mongodb.com/) This is a free open source NOSQL document database with scalability and flexibility. Data are stored in flexible JSON-like documents.
-* [JSON Web Token](https://jwt.io/) JSON Web Token is a proposed Internet standard for creating data with optional signature and/or optional encryption whose payload holds JSON that asserts some number of claims. The tokens are signed either using a private secret or a public/private key.
+* [Socket.IO](https://socket.io/) Socket.IO is an event-driven library for real-time web applications. It enables real-time, bi-directional communication between web clients and servers. It consists of two components: a client, and a server. Both components have a nearly identical API.
 * [Mongoose ODM](https://mongoosejs.com/) This makes it easy to write MongoDB validation by providing a straight-forward, schema-based solution to model to application data.
 <hr>
 ### Sample Data: (User)
