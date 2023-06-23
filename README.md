@@ -14,24 +14,8 @@ This Project is an innovative chat application that leverages modern technologie
 ### API Endpoints
 | HTTP Verbs | Endpoints | Action |
 | --- | --- | --- |
-| GET |api/v1/appointmentOptions | To retrieve all appointment data |
-| GET |api/v1/users?userType={Patient or Doctor} | To retrieve all users based on query (with JWT-authentication)|
-| GET |api/v1/slot/{Doctor's email} | To retrieve all slots of the specific doctor (with JWT-authentication)|
-| GET |api/v1/bookings?email={User's email} | To retrieve all bookings of the specific user (with JWT-authentication)|
-| GET |api/v1/user?email={User's email} | To retrieve all data of the specific user (with JWT-authentication)|
-| GET |api/v1/appointmentSpecialty | To retrieve all services|
-| GET |api/v1/jwt?email={User's email} | To create JWT token|
-| GET |api/v1/booking/:id | To retrieve information of a specific booking (with JWT-authentication)|
-| GET |api/v1/booking-doctor?email={Doctor's Email} | To retrieve all patient of a specific doctor (with JWT-authentication)|
-| POST|api/v1/users | To create a new user account |
-| POST|api/v1/bookings | To create a booking (with JWT-authentication) |
-| POST|api/v1/slots | To create a appointment with slot data (with JWT-authentication) |
-| POST|api/v1/create-payment-intent | To create a new payment intent (with JWT-authentication) |
-| POST|api/v1/payment | To create a payment with payment data  (with JWT-authentication) |
-| PATCH | api/v1/slot |  To Update Slot data (with JWT-authentication)  |
-| PATCH | api/v1/users?id={user id} |  To Update user role (with JWT-authentication)  |
-| PATCH | api/v1/slots |  To Update Slot data (with JWT-authentication)  |
-| DELETE | api/v1/users/:id | To delete a single user (with JWT-authentication)  |
+| POST |api/v1/user/register | To Create new User |
+| POST |api/v1/user/login | To Log in new user|
 
 ### Technologies Used
 * [NodeJS](https://nodejs.org/) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
@@ -44,55 +28,54 @@ This Project is an innovative chat application that leverages modern technologie
 
 ```json
 {
-     "name": "Müller",
+     "username": "Müller",
      "email": "müller@gmail.com",
-     "role": "Patient",
-     "image": "https://i.ibb.co/jgntChz/Screenshot-2022-12-14-at-6-27-13-PM.png"
+     "password": "12345678" 
+     "avatarImage": "",
+     "isAvatarImageSet": false
 }
 ```
 ### Create a new User 
- Route:  api/v1/users (POST)
+ Route:  api/v1/user/register (POST)
+ 
  Request body:
  ```json
  {
-  "name": "Müller",
-  "email": "müller@gmail.com",
-  "role": "Patient",
-  "image": "https://i.ibb.co/jgntChz/Screenshot-2022-12-14-at-6-27-13-PM.png"// Image for upload
+     "username": "Müller",
+     "email": "müller@gmail.com",
+     "password": "12345678" 
+     "avatarImage": "",
+     "isAvatarImageSet": false
 }
 ```
  Response: The newly created user object.
  Response Sample Pattern:
 ```json
  {
-      "success": true, 
-      "statusCode":200,
-      "message": "Users created successfully",
+      "status":"success" , 
+      "message": "Data Inserted",
       "data": {
-               "name": "Müller",
+               "username": "Müller",
                "email": "müller@gmail.com",
-               "role": "Patient",
-               "image": "https://i.ibb.co/jgntChz/Screenshot-2022-12-14-at-6-27-13-PM.png"
+               "password": ""//in hash format 
+              "avatarImage": "",
+             "isAvatarImageSet": false
               }, 
 }
 ```        
-### Get All Users
+### Login User
 
- Route:  api/v1/users?userType={Patient or Doctor} (GET)
+ Route:  api/v1/user/login (POST)
  
- Response: The user's array of objects.
- 
- Response Sample Pattern:
- 
-```json
+ Request body:
+ ```json
   {
-      "success": true, 
-      "statusCode":200,
-      "message": "Users retrieved successfully",
-      "data": [{},{}], 
+     "username": "Müller",
+     "password": "12345678" 
   }
 ```
-
+ Response: The user's array of objects.
+ Response Sample Pattern:
 
 ### Get a Single User
 
