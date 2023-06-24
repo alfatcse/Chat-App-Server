@@ -16,7 +16,10 @@ This Project is an innovative chat application that leverages modern technologie
 | --- | --- | --- |
 | POST |api/v1/user/register | To Create new User |
 | POST |api/v1/user/login | To Log in new user|
-
+| POST |api/v1/setAvatar/:id | To set Avatar as profile picture|
+| GET  |api/v1/allusers/:id | To get all the registered users|
+| POST  |api/v1/addmsg | To send message any of the registered users|
+| GET  |api/v1/getallmessages | To retrive all conversations of a specific user|
 ### Technologies Used
 * [NodeJS](https://nodejs.org/) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 * [ExpressJS](https://www.expresjs.org/) This is a NodeJS web application framework.
@@ -57,7 +60,7 @@ This Project is an innovative chat application that leverages modern technologie
       "data": {
                "username": "Müller",
                "email": "müller@gmail.com",
-               "password": ""//in hash format 
+               "password": "",//in hash format 
               "avatarImage": "",
              "isAvatarImageSet": false
               }, 
@@ -76,12 +79,33 @@ This Project is an innovative chat application that leverages modern technologie
 ```
  Response: The user's array of objects.
  Response Sample Pattern:
+```json
+ {
+      "status":"success" , 
+      "message": "Data Retrived",
+      "data": {
+               "username": "Müller",
+               "email": "müller@gmail.com",
+               "password": "", //in hash format 
+               "avatarImage":"PHuNTQx=PHN2ZyB4bmYwMDAwOyIvPjwvc3ZnPg===",
+               "isAvatarImageSet": false
+              }, 
+}
+```   
 
-### Get a Single User
+### Set avatar of a Single User
 
-Route:  /api/v1/users/:id (GET)
+Route:  /api/v1/setAvatar/:id (POST)
 
 Request Param: :id
+
+ Request body:
+ ```json
+  {
+     "_id": "" //id of the single user,
+     "avatarImage": "PHuNTQx=PHN2ZyB4bmYwMDAwOyIvPjwvc3ZnPg===" 
+  }
+```
 
 Response: The specified user object.
 
@@ -89,255 +113,81 @@ Response Sample Pattern:
 
 ```json
   {
-      "success": true, 
-      "statusCode":200,
-      "message": "User retrieved successfully",
-      "data": {}, 
+      "success": "success", 
+      "message": "Avatar Image set successfully",
   }
   ```  
-  ### Delete a User
+  ### Get all Users
 
- Route:  /api/v1/users/:id ( DELETE)
+ Route:  /api/v1/allusers/:id (GET)
  
  Request Param: :id
  
- Response:  The deleted user object.
+ Response:  The array of all user object.
  
  Response Sample Pattern:
  
 ```json
   {
-      "success": true, 
-      "statusCode":200,
-      "message": "Uers deleted successfully",
-      "data": {}, 
+      "success": "success", 
+      "message": "All Uers retrived successfully",
+      "data": [{},{}...], 
   }
 ```
 
-### Create new appointment data
+### Send message to any of the registered user
 
- Route:  api/v1/slots (POST)
+Route:  api/v1/addmsg (POST)
 
 Request body:
 
 ```json
  {
-    "docEmail": "alfat.cse.21@gmail.com",
-    "docSlot": [
-        {
-            "date": "Saturday, May 27, 2023",
-            "slot": [
-                "12.00 AM-02.00 PM",
-                "03.00 Pm-04.00 PM"
-            ]
-        },
-        {
-            "date": "Friday, May 23, 2023",
-            "slot": [
-                "12.00 AM-02.00 PM",
-                "03.00 Pm-04.00 PM"
-            ]
-        }
-    ]
+    "message":"",  //Message to send
+    "sender":"",   //Sender Id
+    "reciver":"",  //Reciver Id
+    "createdAt":"" //Time Stamp
 }
 
 ```
  
- Response: The newly created appointment data.
+ Response:Sent message .
 
  Response Sample Pattern:
 
 ```json
  {
-      "success": true, 
-      "statusCode":200,
-      "message": "Appointment data created successfully",
-      "data":  {
-                 "docEmail": "alfat.cse.21@gmail.com",
-                 "docSlot": [
-                                {
-                                  "date": "Saturday, May 27, 2023",
-                                  "slot": [
-                                            "12.00 AM-02.00 PM",
-                                            "03.00 Pm-04.00 PM"
-                                          ]
-                                },
-                                {
-                                "date": "Friday, May 23, 2023",
-                                "slot": [
-                                          "12.00 AM-02.00 PM",
-                                          "03.00 Pm-04.00 PM"
-                                        ]
-                                }
-                          ]
-            }, 
+      "success": "success", 
+      "message": "Message sent successfully",
+      "data":  "" //Sent message
   }
 ```
-           
-### Get all appointment option
+### Get all conversations of a specific user           
 
- Route: api/v1/appointmentOptions (GET)
+Route:  api/v1/getallmessages (GET)
 
- Response: The array of objects.
-
- Response Sample Pattern:
+Request body:
 
 ```json
-{
-    "status": "Success",
-    "message": "All Service Type Found",
-    "data": [
-        {
-            "_id": "6385cfeef6afce75f83b4fc6",
-            "name": "Teeth Orthodontics"
-        },
-        {
-            "_id": "6385cfeef6afce75f83b4fc7",
-            "name": "Cosmetic Dentistry"
-        },
-        {
-            "_id": "6385cfeef6afce75f83b4fc8",
-            "name": "Teeth Cleaning"
-        },
-        {
-            "_id": "6385cfeef6afce75f83b4fc9",
-            "name": "Cavity Protection"
-        },
-        {
-            "_id": "6385cfeef6afce75f83b4fca",
-            "name": "Pediatric Dental"
-        },
-        {
-            "_id": "6385cfeef6afce75f83b4fcb",
-            "name": "Oral Surgery"
-        }
-    ]
-}
-```
-Route:  /api/v1/users?
-Query parameters:  (Case Insensitive)
-- page: The page number for pagination (e.g., ?page=1).
-- limit: The number of cow listings per page (e.g., ?limit=10).
-- searchTerm: The search query string for searching users (e.g., ?query=Dhaka). (Search Fields should be name, email, and userType) 
-Response: An array of cow listing objects that match the provided filters, limited to the specified page and limit.
-Response Sample Pattern:
-```json
-  {
-      "success": true, 
-      "statusCode":200,
-      "message": "Users retrieved successfully",
-      "meta": {
-        "page": 3,
-        "limit": 10,
-        },
-      "data": [
-             {
-               "name": "Müller",
-               "email": "müller@gmail.com",
-               "role": "Patient",
-               "image": "https://i.ibb.co/jgntChz/Screenshot-2022-12-14-at-6-27-13-PM.png"
-            }
-        ]
- }
-```
-### Get a Single Booking
-
-Route:  /api/v1/booking/:id (GET)
-
-Request Param: :id
-
-Response: The specified booking object.
-
-Response Sample Pattern:
-
-```json
-  {
-    "status": "Success",
-    "message": "Bookings Found.",
-    "data": {
-        "_id": "648f6975c2ad6f6721a559d0",
-        "patient_name": "habisdsbiiiöäüü",
-        "patient_id": "63a029b84ccc9fde32696387",
-        "patient_email": "maseattonima@gmail.com",
-        "patient_Phone": 12345,
-        "appointmentData": [
-            {
-                "doctor_email": "kori@gmail.comn",
-                "treatment": "Tooth ",
-                "price": 34,
-                "AppointmentDate": "Monday, January 12,2023",
-                "slot": "10-12",
-                "_id": "648f6975c2ad6f6721a559d1"
-            }
-        ]
-    }
-}
-```
-
-
-### Post a Booking
-
- Route: api/v1/bookings (POST)
- 
-  Request body:
- ```json
  {
-  "name": "Müller",
-  "email": "müller@gmail.com",
-  "role": "Patient",
-  "image": "https://i.ibb.co/jgntChz/Screenshot-2022-12-14-at-6-27-13-PM.png"// Image for upload
+    "sender":"",   //Sender Id
+    "reciver":"",  //Reciver Id
 }
+
 ```
+ 
+ Response:Retrive all messages .
+
  Response Sample Pattern:
 
 ```json
-  {
-      "success":  "Success", 
-      "statusCode":200,
-      "message": "Booking Confirmed.Please Check your email", 
+ {
+      "success": "success", 
+      "message": "Message sent successfully",
+      "data":  [{},{}....] //Sent message
   }
-
-```  
-### Post a Payment Intent 
- Route:  api/v1/create-payment-intent (POST)
- Request body:
- ```json
- {
-  "price": 100,
-}
 ```
- Response:Payment intent created
- 
- Response Sample Pattern:
 
-```json
-{
-    "status": "Success",
-    "message": "Payment Intent Created",
-    "clientSecret": Client Secret
-}
-```
-### Post a Payment Information
- Route:  api/v1/payment (POST)
- Request body:
- ```json
-{
-        "price":1442,
-        "transactionid": Trasaction ID,
-        "bookingID": 23784546756625,
-        "email":"alfaddst@g.com"
-}
-```
- Response:Payment intent created
- 
- Response Sample Pattern:
-
-```json
-{
-    "status": "Success",
-    "message": "Payment Data Posted",
-}
-```   
 ### Error Handling:
 Error Response Object include the following properties:
 - success  →  false
