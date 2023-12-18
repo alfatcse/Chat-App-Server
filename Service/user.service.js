@@ -27,7 +27,7 @@ exports.setAvatarService = async (id, avatarimage) => {
   console.log(avatarSet);
   if (avatarSet.modifiedCount === 1) {
     return avatarimage;
-  } 
+  }
 };
 exports.userLogin = async (data) => {
   console.log(data);
@@ -35,28 +35,29 @@ exports.userLogin = async (data) => {
   const user = await User.findOne({ username });
   if (!user) {
     return false;
-  }
-  else{
-    const isPasswordValid = await passwordDecrypt.compare(password, user.password);
+  } else {
+    const isPasswordValid = await passwordDecrypt.compare(
+      password,
+      user.password
+    );
     console.log(isPasswordValid);
-    if(!isPasswordValid){
-        delete user.password;
-        return false;
-    }
-    else{
-        return user; 
+    if (!isPasswordValid) {
+      delete user.password;
+      return false;
+    } else {
+      return user;
     }
   }
 };
-exports.allUsers=async(data)=>{
-    console.log(data);
-    const users=await User.find({_id:{$ne:data}}).select([
-        "email",
-        "username",
-        "avatarImage",
-        "_id"
-    ])
-    if(users){
-        return users;
-    }
-}
+exports.allUsers = async (data) => {
+  const users = await User.find({ _id: { $ne: data } }).select([
+    "email",
+    "username",
+    "avatarImage",
+    "_id",
+  ]);
+
+  if (users) {
+    return users;
+  }
+};

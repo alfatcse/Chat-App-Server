@@ -3,9 +3,9 @@ const cors = require("cors");
 const socket = require("socket.io");
 require("dotenv").config();
 const brcypt = require("bcrypt");
-const DBconnect=require("./Utils/DBConnect");
-const UserRoute=require('./Routes/user.route');
-const MessageRoute=require('./Routes/message.route');
+const DBconnect = require("./Utils/DBConnect");
+const UserRoute = require("./Routes/user.route");
+const MessageRoute = require("./Routes/message.route");
 const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 app.use(cors());
@@ -19,19 +19,18 @@ app.options(cors());
 app.get("/", (req, res) => {
   res.send(`Chat app is running at ${port} port`);
 });
-app.use('/api/v1/user',UserRoute);
-app.use('/api/v1/message',MessageRoute);
+app.use("/api/v1/user", UserRoute);
+app.use("/api/v1/message", MessageRoute);
 const server = app.listen(port, () => {
   console.log(`Server is running ${port}`);
 });
 const io = socket(server, {
   cors: {
-    origin: '*',
-    methods: ["GET", "POST",""],
+    origin: "*",
+    methods: ["GET", "POST", ""],
     credentials: true,
   },
 });
-
 global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
@@ -39,13 +38,11 @@ io.on("connection", (socket) => {
     onlineUsers.set(userId, socket.id);
   });
   socket.on("send-msg", (data) => {
-    console.log('send-msg',data);
+    console.log("send-msg", data);
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
-      
       socket.to(sendUserSocket).emit("msg-recieve", data.message);
     }
   });
 });
-
-
+module.exports = app;

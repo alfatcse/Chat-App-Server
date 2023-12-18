@@ -3,7 +3,7 @@ const {
   createUserService,
   setAvatarService,
   userLogin,
-  allUsers
+  allUsers,
 } = require("../Service/user.service");
 exports.createUser = async (req, res, next) => {
   try {
@@ -73,22 +73,22 @@ exports.loginUser = async (req, res, next) => {
     next(error);
   }
 };
-exports.getAllusers=async(req,res,next)=>{
-  try{
-    const allusers=await allUsers(req.params.id)
-    if(allusers){
+exports.getAllusers = async (req, res, next) => {
+  try {
+    const allusers = await allUsers(req.params.id);
+    if (allusers) {
       res.status(200).json({
         status: "Success",
-        message: "Data inserted",
+        message: "User Data Fetched",
         data: allusers,
       });
     }
-  }catch(error){
-    res.status(400).json({
+  } catch (error) {
+    res.status(404).json({
       status: "Failed",
       message: "Users not found",
       data: error.message,
     });
     next(error);
   }
-}
+};
