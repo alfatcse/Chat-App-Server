@@ -11,7 +11,7 @@ exports.createUser = async (req, res, next) => {
     const userCreate = await createUserService(user);
     res.status(200).json({
       status: "Success",
-      message: "Data inserted",
+      message: "User Created",
       data: userCreate,
     });
   } catch (error) {

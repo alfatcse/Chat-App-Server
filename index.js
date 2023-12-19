@@ -2,11 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const socket = require("socket.io");
 require("dotenv").config();
-const brcypt = require("bcrypt");
 const DBconnect = require("./Utils/DBConnect");
 const UserRoute = require("./Routes/user.route");
 const MessageRoute = require("./Routes/message.route");
-const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -31,7 +29,6 @@ const io = socket(server, {
     credentials: true,
   },
 });
-
 global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
