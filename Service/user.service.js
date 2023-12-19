@@ -12,7 +12,7 @@ exports.createUserService = async (data) => {
     isAvatarImageSet: false,
   };
   const user = await User.create(userInsert);
-  console.log(user);
+
   return user;
 };
 exports.setAvatarService = async (id, avatarimage) => {
