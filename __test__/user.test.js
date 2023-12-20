@@ -4,6 +4,7 @@ const app = createServer();
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { default: mongoose } = require("mongoose");
 const { createUserService } = require("../Service/user.service");
+let User_Id = "";
 describe("User Route:", () => {
   beforeAll(async () => {
     const mongoDBMemoryServer = await MongoMemoryServer.create();
@@ -25,6 +26,7 @@ describe("User Route:", () => {
       const response = await supertest(app)
         .post(`/api/v1/user/register`)
         .send(user);
+      User_Id = response.body.data._id;
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe("User Created");
       expect(response.body.data).toBeDefined();
@@ -37,7 +39,7 @@ describe("User Route:", () => {
     });
     it("It should return 404 for incorrect user id", async () => {
       const response = await supertest(app).get(
-        `/api/v1/user/allusers/${"jnenfe"}`
+        `/api/v1/user/allusers/${"6580cd068ce31e44ea6p442t"}`
       );
       expect(response.statusCode).toBe(404);
       expect(response.body.message).toBe("Users not found");
@@ -52,7 +54,7 @@ describe("User Route:", () => {
       // Check if the array contains at least one element
       expect(response.body.data.length).toBeGreaterThan(0);
     });
-  }, 5000);
+  });
   describe("Login Single User", () => {
     it("It should login user", async () => {
       const user = {
@@ -63,6 +65,41 @@ describe("User Route:", () => {
         .post(`/api/v1/user/login`)
         .send(user);
       expect(response.statusCode).toBe(200);
+      expect(response.body.message).toBe("Login Successful");
+      expect(response.body.userlogin.username).toBe(user.username);
+    });
+    it("It should fail to login due to wrong pass", async () => {
+      const user = {
+        username: "runa",
+        password: "123456",
+      };
+      const response = await supertest(app)
+        .post(`/api/v1/user/login`)
+        .send(user);
+      expect(response.statusCode).toBe(400);
+    });
+    it("It should fail to login due to wrong user id", async () => {
+      const user = {
+        username: "run",
+        password: "12345",
+      };
+      const response = await supertest(app)
+        .post(`/api/v1/user/login`)
+        .send(user);
+      expect(response.statusCode).toBe(400);
+    });
+  });
+  describe("Set Avater", () => {
+    it("It should set an avater image", async () => {
+      const id = User_Id;
+      const response = await supertest(app)
+        .post(`/api/v1/user/setAvatar/${id}`)
+        .send({
+          avatarImage: "avater_Image",
+        });
+      console.log(response.body);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.isSet).toBe(true);
     });
   });
 });

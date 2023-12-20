@@ -33,10 +33,11 @@ exports.setAvatar = async (req, res, next) => {
       res.status(200).json({
         isSet: true,
         image: setAvatar,
+        message: "Avatar Image Updated",
       });
     } else {
       res.status(400).json({
-        status: "failed",
+        status: "Failed",
         message: "Avatar not Updated",
       });
     }
@@ -61,6 +62,7 @@ exports.loginUser = async (req, res, next) => {
     } else {
       res.status(200).json({
         status: true,
+        message: "Login Successful",
         userlogin,
       });
     }
