@@ -1,11 +1,14 @@
 const supertest = require("supertest");
-const createServer = require("../Server");
-const app = createServer();
+const createServerAPI = require("../Server");
+const app = createServerAPI();
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const Client = require("socket.io-client");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { default: mongoose } = require("mongoose");
 let User_Id = "";
 let User_Id1 = "";
-describe("User Route:", () => {
+describe("API Route:", () => {
   beforeAll(async () => {
     const mongoDBMemoryServer = await MongoMemoryServer.create();
     const uri = mongoDBMemoryServer.getUri();
@@ -38,7 +41,6 @@ describe("User Route:", () => {
         .send(user2);
       User_Id = response.body.data._id;
       User_Id1 = response1.body.data._id;
-      console.log(User_Id, "UUUUU", User_Id1);
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe("User Created");
       expect(response.body.data).toBeDefined();
@@ -123,8 +125,71 @@ describe("User Route:", () => {
       const response = await supertest(app)
         .post("/api/v1/message/addmsg")
         .send(message);
-      console.log(response.body);
       expect(response.statusCode).toBe(200);
+    });
+  });
+});
+describe("Socket Functionality", () => {
+  let io, serverSocket, clientSocket;
+
+  // Initialize server and socket.io before tests
+  beforeAll((done) => {
+    const server = createServer(createServerAPI());
+    io = new Server(server, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: true,
+      },
+    });
+
+    io.on("connection", (socket) => {
+      serverSocket = socket;
+      // Ensure global.onlineUsers is initialized as a Map
+      global.onlineUsers = new Map();
+      socket.on("add-user", (userId) => {
+        global.onlineUsers.set(userId, socket.id);
+      });
+      socket.on("send-msg", (data) => {
+        const sendUserSocket = global.onlineUsers.get(data.to);
+        if (sendUserSocket) {
+          io.to(sendUserSocket).emit("msg-recieve", data.message);
+        }
+      });
+    });
+
+    server.listen(() => {
+      const port = server.address().port;
+      clientSocket = new Client(`http://localhost:${port}`);
+      clientSocket.on("connect", done);
+    });
+  });
+
+  // Close sockets and server after tests
+  afterAll(() => {
+    io.close();
+    clientSocket.close();
+  });
+
+  // Test adding a user
+  it("should add a user", (done) => {
+    clientSocket.emit("add-user", User_Id);
+    // Add assertions to check if the user was added
+    // For example:
+    setTimeout(() => {
+      expect(global.onlineUsers.has(User_Id)).toBe(true);
+      done();
+    }, 500);
+  });
+
+  // Test sending a message
+  it("should send a message", (done) => {
+    clientSocket.emit("send-msg", { to: User_Id, message: "Hello" });
+    // Add assertions to check if the message was received
+    // For example:
+    serverSocket.on("msg-recieve", (message) => {
+      expect(message).toBe("Hello");
+      done();
     });
   });
 });
