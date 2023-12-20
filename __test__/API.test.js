@@ -3,8 +3,8 @@ const createServer = require("../Server");
 const app = createServer();
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { default: mongoose } = require("mongoose");
-const { createUserService } = require("../Service/user.service");
 let User_Id = "";
+let User_Id1 = "";
 describe("User Route:", () => {
   beforeAll(async () => {
     const mongoDBMemoryServer = await MongoMemoryServer.create();
@@ -16,22 +16,34 @@ describe("User Route:", () => {
   });
   describe("Get a Single User", () => {
     it("It should create a user", async () => {
-      const user = {
-        username: "runa",
-        email: "runa@gmail.com",
+      const user1 = {
+        username: "user1",
+        email: "user1@gmail.com",
+        password: "12345",
+        avatarImage: "",
+        isAvatarImageSet: false,
+      };
+      const user2 = {
+        username: "user2",
+        email: "user2@gmail.com",
         password: "12345",
         avatarImage: "",
         isAvatarImageSet: false,
       };
       const response = await supertest(app)
         .post(`/api/v1/user/register`)
-        .send(user);
+        .send(user1);
+      const response1 = await supertest(app)
+        .post(`/api/v1/user/register`)
+        .send(user2);
       User_Id = response.body.data._id;
+      User_Id1 = response1.body.data._id;
+      console.log(User_Id, "UUUUU", User_Id1);
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe("User Created");
       expect(response.body.data).toBeDefined();
-      expect(response.body.data.username).toBe(user.username);
-      expect(response.body.data.email).toBe(user.email);
+      expect(response.body.data.username).toBe(user1.username);
+      expect(response.body.data.email).toBe(user1.email);
       // Check if _id property exists and is a string with a length greater than 0
       expect(response.body.data._id).toBeDefined();
       expect(typeof response.body.data._id).toBe("string");
@@ -58,7 +70,7 @@ describe("User Route:", () => {
   describe("Login Single User", () => {
     it("It should login user", async () => {
       const user = {
-        username: "runa",
+        username: "user1",
         password: "12345",
       };
       const response = await supertest(app)
@@ -97,9 +109,22 @@ describe("User Route:", () => {
         .send({
           avatarImage: "avater_Image",
         });
-      console.log(response.body);
       expect(response.statusCode).toBe(200);
       expect(response.body.isSet).toBe(true);
+    });
+  });
+  describe("Message Api test:", () => {
+    it("Insert message:", async () => {
+      const message = {
+        message: "hi",
+        to: User_Id,
+        from: User_Id1,
+      };
+      const response = await supertest(app)
+        .post("/api/v1/message/addmsg")
+        .send(message);
+      console.log(response.body);
+      expect(response.statusCode).toBe(200);
     });
   });
 });

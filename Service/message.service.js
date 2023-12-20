@@ -6,7 +6,9 @@ exports.addMessageService = async (data) => {
     sender: data.from,
     createdAt: new Date(),
   };
+  console.log("Msg Data", MsgData);
   const megInsert = await Message.create(MsgData);
+  console.log("meg Insert", megInsert);
   if (megInsert) {
     return true;
   } else {
