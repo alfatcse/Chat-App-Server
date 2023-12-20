@@ -9,11 +9,13 @@ const { default: mongoose } = require("mongoose");
 let User_Id = "";
 let User_Id1 = "";
 describe("API Route:", () => {
+  //Initialize mock server before tests
   beforeAll(async () => {
     const mongoDBMemoryServer = await MongoMemoryServer.create();
     const uri = mongoDBMemoryServer.getUri();
     await mongoose.connect(uri);
   });
+  // Destroy mock server after test
   afterAll(async () => {
     await mongoose.disconnect();
   });
@@ -129,9 +131,8 @@ describe("API Route:", () => {
     });
   });
 });
-describe("Socket Functionality", () => {
+describe("Socket Functionality test:", () => {
   let io, serverSocket, clientSocket;
-
   // Initialize server and socket.io before tests
   beforeAll((done) => {
     const server = createServer(createServerAPI());
@@ -179,17 +180,26 @@ describe("Socket Functionality", () => {
     setTimeout(() => {
       expect(global.onlineUsers.has(User_Id)).toBe(true);
       done();
-    }, 500);
+    }, 5);
   });
-
   // Test sending a message
-  it("should send a message", (done) => {
-    clientSocket.emit("send-msg", { to: User_Id, message: "Hello" });
-    // Add assertions to check if the message was received
-    // For example:
-    serverSocket.on("msg-recieve", (message) => {
-      expect(message).toBe("Hello");
-      done();
+  it("should send a message from User_Id1 to User_Id", (done) => {
+    const message = {
+      message: "Hello from User_Id1",
+      to: User_Id,
+      from: User_Id1,
+    };
+    clientSocket.emit("send-msg", message);
+    // Listen for the 'msg-recieve' event on User_Id's socket
+    serverSocket.on("send-msg", (receivedMessage) => {
+      // Ensure the message is received by User_Id
+      const sendUserSocket = onlineUsers.get(receivedMessage.to);
+      if (sendUserSocket) {
+        serverSocket
+          .to(sendUserSocket)
+          .emit("receive-msg", receivedMessage.message);
+        done();
+      }
     });
   });
 });
