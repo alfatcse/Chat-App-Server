@@ -7,7 +7,6 @@ exports.addMessageService = async (data) => {
     createdAt: new Date(),
   };
   const megInsert = await Message.create(MsgData);
-  console.log(megInsert);
   if (megInsert) {
     return true;
   } else {
@@ -29,6 +28,5 @@ exports.getMessage = async (data) => {
     };
     projectedMessage.push(m);
   });
-  console.log(projectedMessage);
   return projectedMessage;
 };

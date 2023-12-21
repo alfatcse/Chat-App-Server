@@ -12,11 +12,16 @@ exports.createUserService = async (data) => {
     isAvatarImageSet: false,
   };
   const user = await User.create(userInsert);
-  console.log(user);
-  return user;
+  const insertUser = {
+    email: user.email,
+    username: user.username,
+    isAvatarImageSet: user.isAvatarImageSet,
+    avatarImage: user.avatarImage,
+    _id: user._id,
+  };
+  return insertUser;
 };
 exports.setAvatarService = async (id, avatarimage) => {
-  console.log(id, avatarimage);
   const avatarSet = await User.updateOne(
     { _id: id },
     { avatarImage: avatarimage, isAvatarImageSet: true },
@@ -24,15 +29,20 @@ exports.setAvatarService = async (id, avatarimage) => {
       returnOriginal: false,
     }
   );
-  console.log(avatarSet);
   if (avatarSet.modifiedCount === 1) {
     return avatarimage;
   }
 };
 exports.userLogin = async (data) => {
-  console.log(data);
   const { username, password } = data;
   const user = await User.findOne({ username });
+  const insertUser = {
+    email: user.email,
+    username: user.username,
+    isAvatarImageSet: user.isAvatarImageSet,
+    avatarImage: user.avatarImage,
+    _id: user._id,
+  };
   if (!user) {
     return false;
   } else {
@@ -40,12 +50,11 @@ exports.userLogin = async (data) => {
       password,
       user.password
     );
-    console.log(isPasswordValid);
     if (!isPasswordValid) {
       delete user.password;
       return false;
     } else {
-      return user;
+      return insertUser;
     }
   }
 };
@@ -56,7 +65,6 @@ exports.allUsers = async (data) => {
     "avatarImage",
     "_id",
   ]);
-
   if (users) {
     return users;
   }
