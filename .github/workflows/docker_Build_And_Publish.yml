@@ -2,10 +2,17 @@ name: Publish Docker Image
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
 
 jobs:
   build:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.labels.*.name, 'merge-ready')
     runs-on: ubuntu-latest
 
     steps:
@@ -17,11 +24,11 @@ jobs:
       - name: Display .env
         run: cat .env
 
-      - name: Login to docker hub
-        run: echo "${{secrets.DOCKERHUB_TOKEN}}" | docker login -u "${{secrets.DOCKERHUB_USERNAME}}" --password-stdin
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/chat-app-server:latest
+        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/chat-app-server:latest
 
       - name: Push Docker Image
-        run: docker push ${{secrets.DOCKERHUB_USERNAME}}/chat-app-server:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/chat-app-server:latest
