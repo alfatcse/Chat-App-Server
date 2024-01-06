@@ -1,0 +1,22 @@
+name: Publish Docker Image
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to docker hub
+        run: echo "${{secrets.DOCKERGUB_TOKEN}}" | docker login -u "${{secrets.DOCKERGUB_USERNAME}}" --password-stdin
+
+      # - name: Build Docker Image
+      #   run: docker build . --file Dockerfile --tag {{secrets.DOCKERGUB_USERNAME}}/university-management-auth-service:latest
+
+      # - name: Push Docker Image
+      #   run: docker push {{secrets.DOCKERGUB_USERNAME}}/university-management-auth-service:latest
