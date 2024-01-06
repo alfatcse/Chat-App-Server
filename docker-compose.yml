@@ -1,0 +1,8 @@
+version: '3'
+services:
+  node-app:
+    image: alfatjahan/chat-app-server:latest
+    container_name: chat-app-server
+   # network_mode: 'host'
+    ports: 
+        - 4000:4000 
