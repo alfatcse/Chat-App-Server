@@ -133,7 +133,6 @@ describe("API Route:", () => {
 });
 describe("Socket Functionality test:", () => {
   let io, serverSocket, clientSocket;
-  // Initialize server and socket.io before tests
   beforeAll((done) => {
     const server = createServer(createServerAPI());
     io = new Server(server, {
