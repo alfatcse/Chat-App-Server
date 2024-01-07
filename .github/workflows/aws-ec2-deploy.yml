@@ -18,4 +18,4 @@ jobs:
       - name: Pull image from Docker Hub
         run: docker pull ${{secrets.DOCKERHUB_USERNAME}}/chat-app-server:latest
       - name: Run the Image with Port Configuration
-        run: docker run -p 4000:4000 -d ${{ secrets.DOCKERHUB_USERNAME }}/chat-app-server:latest
+        run: docker compose up -d
