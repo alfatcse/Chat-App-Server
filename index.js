@@ -11,7 +11,7 @@ app.use(express.json());
 const port = 4000;
 app.options(cors());
 app.get("/", (req, res) => {
-  res.send(`Chat app is running at ${port} port`);
+  res.send(`Chat Application Server is running at ${port} Port`);
 });
 app.use("/api/v1/user", UserRoute);
 app.use("/api/v1/message", MessageRoute);
