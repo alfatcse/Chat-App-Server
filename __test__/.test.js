@@ -9,7 +9,6 @@ const { default: mongoose } = require("mongoose");
 let User_Id = "";
 let User_Id1 = "";
 describe("API Route:", () => {
-  //Initialize mock server before tests
   beforeAll(async () => {
     const mongoDBMemoryServer = await MongoMemoryServer.create();
     const uri = mongoDBMemoryServer.getUri();
