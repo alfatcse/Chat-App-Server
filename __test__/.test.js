@@ -47,7 +47,6 @@ describe("API Route:", () => {
       expect(response.body.data).toBeDefined();
       expect(response.body.data.username).toBe(user1.username);
       expect(response.body.data.email).toBe(user1.email);
-      // Check if _id property exists and is a string with a length greater than 0
       expect(response.body.data._id).toBeDefined();
       expect(typeof response.body.data._id).toBe("string");
       expect(response.body.data._id.length).toBeGreaterThan(0);
