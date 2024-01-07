@@ -1,0 +1,21 @@
+name: Deploy Docker Image to AWS
+
+on:
+  workflow_run:
+    workflows: ["Build and Publish Docker Image"]
+    types: [completed]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Stop the old container
+        run: docker stop chat-app-server || true
+      - name: Remove the old Container
+        run: docker rm chat-app-server || true
+      - name: Remove the old Image
+        run: docker rmi ${{secrets.DOCKERHUB_USERNAME}}/chat-app-server:latest || true
+      - name: Pull image from Docker Hub
+        run: docker pull ${{secrets.DOCKERHUB_USERNAME}}/chat-app-server:latest
+      - name: Run the Image with Port Configuration
+        run: docker compose up -d
