@@ -8,10 +8,10 @@ const MessageRoute = require("./Routes/message.route");
 const app = express();
 app.use(cors());
 app.use(express.json());
-const port = 4000;
+const port = process.env.PORT;
 app.options(cors());
 app.get("/", (req, res) => {
-  res.send(`Chat Application Server is running at ${port} Port`);
+  res.send(`Chat app  is running at ${port} port`);
 });
 app.use("/api/v1/user", UserRoute);
 app.use("/api/v1/message", MessageRoute);
