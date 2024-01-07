@@ -1,8 +1,8 @@
-version: '3'
+version: '1'
 services:
   node-app:
     image: alfatjahanbsmrstu102/chat-app-server
     container_name: chat-app-server
-   # network_mode: 'host'
+    network_mode: 'host'
     ports: 
         - 4000:4000 
