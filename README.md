@@ -10,7 +10,7 @@ This Project is an innovative chat application that leverages modern technologie
 ### Usage
 * Run npm start:dev to start the application.
 * Connect to the API using Postman on port 5009.
-## Live Link:     [http://Chat-App-Server:4000](http://18.197.51.51:4000/)  
+## Live Link:     [http://Chat-App-Server:4000](http://3.64.144.2:4000)  
 ### API Endpoints
 | HTTP Verbs | Endpoints | Action |
 | --- | --- | --- |
