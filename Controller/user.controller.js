@@ -94,3 +94,4 @@ exports.getAllusers = async (req, res, next) => {
     next(error);
   }
 };
+//console.log("process.env.SECRET_KEY");
