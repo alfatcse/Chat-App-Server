@@ -94,4 +94,3 @@ exports.getAllusers = async (req, res, next) => {
     next(error);
   }
 };
-//console.log('test docker images')
