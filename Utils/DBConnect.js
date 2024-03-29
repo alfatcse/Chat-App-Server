@@ -6,9 +6,7 @@ const client = new MongoClient(connectionString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
 try {
-  // Connect to the MongoDB cluster
   mongoose.connect(
     connectionString,
     { useNewUrlParser: true, useUnifiedTopology: true },
