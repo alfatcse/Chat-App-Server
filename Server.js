@@ -8,7 +8,7 @@ function createServerAPI() {
   app.use(cors());
   const port = 4000;
   app.get("/", (req, res) => {
-    res.send(`Chat app is running at ${port} port`);
+    res.send(`Chat app Server is running at ${port} port`);
   });
   app.use("/api/v1/user", UserRoute);
   app.use("/api/v1/message", MessageRoute);
