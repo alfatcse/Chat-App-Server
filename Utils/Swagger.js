@@ -9,7 +9,7 @@ const options = {
       },
       servers: [
         {
-          url: "http://localhost:4000/api/v1",
+          url: "https://chat-app-server-414t.onrender.com/api/v1",
         },
       ],
     },
