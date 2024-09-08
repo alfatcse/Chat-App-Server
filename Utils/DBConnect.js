@@ -10,7 +10,7 @@ try {
   mongoose.connect(
     connectionString,
     { useNewUrlParser: true, useUnifiedTopology: true },
-    () => console.log("Mongoose is connected here")
+    () => console.log("Mongoose is connected here go")
   );
 } catch (e) {
   console.log("could not connect");
